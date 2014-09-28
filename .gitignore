@@ -1,0 +1,6 @@
+.gems/
+*.md~
+*.rb~
+*.rb#
+pkg/
+Gemfile.lock
