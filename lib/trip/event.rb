@@ -7,9 +7,9 @@ class Trip::Event < BasicObject
   attr_reader :name, :created_at
 
   def initialize(name, event)
-    @name       = name
-    @event      = event
+    @name = name
     @created_at = Time.now
+    @event = event
   end
 
   [:file, :lineno, :module, :method, :binding].each do |name|
