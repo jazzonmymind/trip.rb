@@ -24,7 +24,7 @@ class Trip
   #
   def initialize(&block)
     if block.equal?(nil)
-      raise ArgumentError, 'expected to receive a block but none given'
+      raise ArgumentError, 'no block given'
     end
     @thread = nil
     @block  = block
@@ -39,13 +39,13 @@ class Trip
   # @param [Proc] callable
   #   accepts a Proc or a block
   #
-  # @return [Proc] 
+  # @return [Proc]
   #   returns a Proc
   #
   def pause?(callable = nil, &block)
     pause = callable || block
     if pause.equal?(nil)
-      raise ArgumentError, 'expected to receive a block but none given'
+      raise ArgumentError, 'no block given'
     end
     @pause = pause
   end
@@ -93,7 +93,7 @@ class Trip
   #
   def resume
     unless started?
-      raise NotStartedError, 'the tracer has not been started'
+      raise NotStartedError, 'trace not started'
     end
     if sleeping?
       @thread.wakeup
@@ -106,13 +106,13 @@ class Trip
   #
   # @raise [Trip::NotFinishedError]
   #   when a trace is already in progress
-  #   
+  #
   # @return [Trip::Event, nil]
-  #   returns an event, or nil 
+  #   returns an event, or nil
   #
   def start
     if started? and !finished?
-      raise NotFinishedError, 'a trace is still in progress'
+      raise NotFinishedError, 'trace not finished'
     end
     @queue = Queue.new
     @thread = Thread.new do
@@ -142,8 +142,8 @@ class Trip
 private
   def on_event(name, file, lineno, method, binding, classname)
     event = Event.new name, {
-      file:      file, 
-      lineno:    lineno, 
+      file:      file,
+      lineno:    lineno,
       module:    classname,
       method:    method,
       binding:   binding
@@ -154,7 +154,7 @@ private
     end
   rescue Exception => e
     warn <<-CRASH.each_line.map(&:lstrip)
-    (trip) the tracer has crashed! :(
+    (trip) the tracer has crashed.
 
     #{e.class}:
     #{e.message}
