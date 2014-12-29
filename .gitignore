@@ -3,4 +3,5 @@
 *.rb~
 *.rb#
 pkg/
+.bundle/
 Gemfile.lock
