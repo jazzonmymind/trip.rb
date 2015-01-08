@@ -11,6 +11,7 @@ describe Trip::Event do
       trip = Trip.new { Y.run }
       event = trip.start
       assert_equal Y, event.module
+      trip.stop
     end
   end
 end
