@@ -142,11 +142,11 @@ class Trip
 private
   def on_event(name, file, lineno, method, binding, classname)
     event = Event.new name, {
-      file:      file,
-      lineno:    lineno,
-      module:    classname,
-      method:    method,
-      binding:   binding
+      file:    file,
+      lineno:  lineno,
+      mod:     classname,
+      method:  method,
+      binding: binding
     }
     if event.file != __FILE__ and @pause.call(event)
       @queue.enq(event)

@@ -12,7 +12,7 @@ class Trip::Event < BasicObject
     @event = event
   end
 
-  [:file, :lineno, :module, :method, :binding].each do |name|
+  [:file, :lineno, :mod, :method, :binding].each do |name|
     define_method(name) { @event[name] }
   end
 
@@ -22,10 +22,5 @@ class Trip::Event < BasicObject
   #
   def __binding__
     Kernel.binding
-  end
-
-  def inspect
-    inspect_m = Kernel.instance_method(:inspect).bind(self)
-    inspect_m.call
   end
 end

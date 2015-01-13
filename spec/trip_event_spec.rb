@@ -35,7 +35,7 @@ describe Trip::Event do
     describe 'call and return from a method implemented in C' do
       let(:trip) do
         Trip.new { Kernel.print '' }.tap do |trip|
-          trip.pause? { |e| e.module == Kernel and e.method == :print }
+          trip.pause? { |e| e.mod == Kernel and e.method == :print }
         end
       end
 
@@ -58,9 +58,9 @@ describe Trip::Event do
     end
   end
 
-  describe '#module' do
+  describe '#mod' do
     it 'returns a Module' do
-      assert_equal Y, event.module
+      assert_equal Y, event.mod
     end
   end
 
