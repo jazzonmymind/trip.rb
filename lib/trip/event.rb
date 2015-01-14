@@ -16,6 +16,10 @@ class Trip::Event < BasicObject
     define_method(name) { @event[name] }
   end
 
+  def inspect
+    "#<Trip::Event:0x#{__id__.to_s(16)} file='#{file}' lineno='#{lineno}' module='#{mod}' method='#{method}' binding=#{binding.inspect}>"
+  end
+
   #
   # @return [Binding]
   #   returns a binding for an instance of {Trip::Event}
