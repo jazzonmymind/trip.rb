@@ -17,7 +17,7 @@ class Trip::Event < BasicObject
   end
 
   def inspect
-    "#<Trip::Event:0x#{__id__.to_s(16)} file='#{file}' lineno='#{lineno}' module='#{mod}' method='#{method}' binding=#{binding.inspect}>"
+    "#<Trip::Event:0x#{__id__.to_s(16)} name='#{name}' created_at='#{created_at}' file='#{file}' lineno='#{lineno}' module='#{mod}' method='#{method}' binding=#{binding.inspect}>"
   end
 
   #
