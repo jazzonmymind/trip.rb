@@ -1,19 +1,22 @@
 require_relative 'setup'
 describe Trip do
+  let(:trip) do
+    Trip.new { planet.echo('ping') }
+  end
+
+  let(:planet) do
+    Planet.new
+  end
+
   class Planet
     def echo(message)
       return message
     end
   end
 
-  before do
-    @planet = Planet.new
-    @trip   = Trip.new { @planet.echo('ping') }
-  end
-
   after do
-    unless @trip.finished?
-      @trip.stop
+    unless trip.finished?
+      trip.stop
     end
   end
 
@@ -25,87 +28,87 @@ describe Trip do
 
   describe '#start' do
     it 'returns an instance of Trip::Event' do
-      assert Trip::Event === @trip.start
+      assert Trip::Event === trip.start
     end
 
     it 'returns nil with a false pause predicate' do
-      @trip.pause? { false }
-      assert_equal nil, @trip.start
+      trip.pause? { false }
+      assert_equal nil, trip.start
     end
 
     it 'raises Trip::NotFinishedError' do
-      @trip.start
-      assert_raises(Trip::NotFinishedError) { @trip.start }
+      trip.start
+      assert_raises(Trip::NotFinishedError) { trip.start }
     end
   end
 
   describe '#sleeping?' do
     it 'returns true' do
-      @trip.start
-      assert_equal true, @trip.sleeping?
+      trip.start
+      assert_equal true, trip.sleeping?
     end
 
     it 'returns false' do
-      @trip.start
-      @trip.resume while @trip.resume
-      assert_equal false, @trip.sleeping?
+      trip.start
+      trip.resume while trip.resume
+      assert_equal false, trip.sleeping?
     end
   end
 
   describe '#started?' do
     it 'returns true' do
-      @trip.start
-      assert_equal true, @trip.started?
+      trip.start
+      assert_equal true, trip.started?
     end
 
     it 'returns false' do
-      assert_equal false, @trip.started?
+      assert_equal false, trip.started?
     end
   end
   
   describe '#resume' do
     it 'raises Trip::NotStartedError' do
-      assert_raises(Trip::NotStartedError) { @trip.resume }
+      assert_raises(Trip::NotStartedError) { trip.resume }
     end
   end
 
   describe '#pause?' do
     it 'raises an ArgumentError' do
-      assert_raises(ArgumentError) { @trip.pause? }
+      assert_raises(ArgumentError) { trip.pause? }
     end
     
     it 'accepts a Proc' do
       obj = Proc.new {}
-      assert_equal obj, @trip.pause?(obj)
+      assert_equal obj, trip.pause?(obj)
     end
   end
 
   describe '#finished?' do
     it 'returns true' do
-      @trip.start
-      @trip.resume while @trip.resume
-      assert_equal true, @trip.finished?
+      trip.start
+      trip.resume while trip.resume
+      assert_equal true, trip.finished?
     end
 
     it 'returns false' do
-      @trip.start
-      assert_equal false, @trip.finished? 
+      trip.start
+      assert_equal false, trip.finished? 
     end
 
     it 'returns nil' do
-      assert_equal nil, @trip.finished?
+      assert_equal nil, trip.finished?
     end
   end
 
   describe '#running?' do
     it 'returns false' do
-      @trip.start
-      @trip.resume while @trip.resume
-      assert_equal false, @trip.running?
+      trip.start
+      trip.resume while trip.resume
+      assert_equal false, trip.running?
     end
 
     it 'returns nil' do
-      assert_equal nil, @trip.running?
+      assert_equal nil, trip.running?
     end
   end
 end
