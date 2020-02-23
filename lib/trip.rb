@@ -103,9 +103,10 @@ class Trip
                            "Call #resume instead ?" if started? && !finished?
     @queue = Queue.new
     @thread = Thread.new do
-      Thread.current.set_trace_func method(:on_event).to_proc
+      jruby? ? Kernel.set_trace_func(method(:on_event).to_proc) :
+               @thread.set_trace_func(method(:on_event).to_proc)
       @block.call
-      Thread.current.set_trace_func(nil)
+      jruby? ? Kernel.set_trace_func(nil) : @thread.set_trace_func(nil)
       @queue.enq(nil)
     end
     @queue.deq
@@ -146,6 +147,11 @@ class Trip
 
   private
   def on_event(type, file, lineno, from_method, binding, from_module)
+    # JRuby doesn't implement `Thread#set_trace_func`, only
+    # `Kernel#set_trace_func`, which runs across all threads.
+    # On JRuby, we ignore threads that aren't the tracer thread
+    # to work around this.
+    return if jruby? and @thread != Thread.current
     run_safely(Trip::InternalError.new("The tracer encountered an internal error and crashed")) {
       event = Event.new type, {
                           file:         file,
@@ -168,5 +174,9 @@ class Trip
     Thread.current.set_trace_func(nil)
     @caller.raise(e)
     false
+  end
+
+  def jruby?
+    RUBY_ENGINE == "jruby"
   end
 end

@@ -4,7 +4,10 @@ gem "rake"
 group :test do
   gem 'rspec'
 end
-group :development do
-  gem 'yard'
-  gem 'redcarpet'
+
+if RUBY_ENGINE != "jruby"
+  group :development do
+    gem 'yard'
+    gem 'redcarpet'
+  end
 end
