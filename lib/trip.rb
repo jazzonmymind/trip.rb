@@ -103,10 +103,9 @@ class Trip
                            "Call #resume instead ?" if started? && !finished?
     @queue = Queue.new
     @thread = Thread.new do
-      jruby? ? Kernel.set_trace_func(method(:on_event).to_proc) :
-               @thread.set_trace_func(method(:on_event).to_proc)
+      set_trace_func_target.set_trace_func method(:on_event).to_proc
       @block.call
-      jruby? ? Kernel.set_trace_func(nil) : @thread.set_trace_func(nil)
+      set_trace_func_target.set_trace_func(nil)
       @queue.enq(nil)
     end
     @queue.deq
@@ -138,7 +137,7 @@ class Trip
   #
   def stop
     if @thread
-      @thread.set_trace_func(nil)
+      set_trace_func_target.set_trace_func(nil)
       @thread.exit
       @thread.join
       nil
@@ -171,9 +170,13 @@ class Trip
     yield
   rescue Exception => cause
     e.define_singleton_method(:cause) { cause }
-    Thread.current.set_trace_func(nil)
+    set_trace_func_target.set_trace_func(nil)
     @caller.raise(e)
     false
+  end
+
+  def set_trace_func_target
+    jruby? ? Kernel : @thread
   end
 
   def jruby?
